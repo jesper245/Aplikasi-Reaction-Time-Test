@@ -1,0 +1,18 @@
+services:
+  mysql:
+    image: mysql:8.4.6
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: aimtrainer
+      MYSQL_USER: jesper
+      MYSQL_PASSWORD: secret
+    volumes:
+      - ./.docker/mysql:/var/lib/mysql
+      - ./.docker/mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "jesper", "-psecret"]
+      interval: 5s
+      timeout: 10s
+      retries: 5

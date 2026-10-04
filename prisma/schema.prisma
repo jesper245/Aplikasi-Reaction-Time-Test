@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(uuid()) @db.VarChar(36)
+  username String   @unique
+  password String
+  role     UserRole @default(USER)
+
+  scores     Score[]
+  bestScores BestScore[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum GameType {
+  AIMTARGET
+}
+
+model BestScore {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  gameType  GameType @default(AIMTARGET) @map("game_type")
+  startTime BigInt   @map("start_time")
+  endTime   BigInt   @map("end_time")
+  timeTaken BigInt   @map("time_taken")
+  userId    String   @map("user_id") @db.VarChar(36)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("best_scores")
+}
+
+model Score {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  gameType  GameType @default(AIMTARGET) @map("game_type")
+  startTime BigInt   @map("start_time")
+  endTime   BigInt   @map("end_time")
+  timeTaken BigInt   @map("time_taken")
+  userId    String   @map("user_id") @db.VarChar(36)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("scores")
+}
